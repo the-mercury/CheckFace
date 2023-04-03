@@ -1,0 +1,22 @@
+QPushButton {
+    border-radius: 9px;
+    background-color: rgb(60, 200, 150);
+    color: rgb(250, 250, 250);
+    margin: 0.25em 0.25em 0.25em 0em;
+    font-family: 'Roboto', 'Noto', sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+
+QPushButton:hover {
+    background-color: rgb(100, 200, 150);
+}
+
+QPushButton:pressed {
+    background-color: darkseagreen;
+}
+
+QPushButton:disabled {
+    background-color: dimgray;
+}
