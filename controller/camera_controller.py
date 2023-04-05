@@ -3,6 +3,7 @@ from PyQt6.QtCore import pyqtSlot, QObject, QMutex, QWaitCondition
 from PyQt6.QtGui import QPixmap, QImage
 
 from controller.overlay_controller import OverlayController
+from helper.face_detector import FaceDetector
 
 
 class CameraController(QObject):
@@ -44,6 +45,41 @@ class CameraController(QObject):
     def __update_view_size(self, square_frame_size):
         self.camera_view.square_frame(square_frame_size)
         self.overlay_controller.update_overlay_mask(square_frame_size)
+
+    def __on_face_status_update(self, face_status, app_mode):
+        if app_mode is not OverlayController.AppMode.MODEL_GENERATE and \
+                app_mode is not OverlayController.AppMode.VERIFIED and \
+                app_mode is not OverlayController.AppMode.REJECTED:
+
+            is_visible = False
+            toast_message = None
+            learn_button_is_enabled = True
+            verify_button_is_enabled = True
+
+            if face_status == FaceDetector.FaceStatus.FINE or face_status == FaceDetector.FaceStatus.UNKNOWN:
+                is_visible = False
+                toast_message = None
+
+            elif face_status == FaceDetector.FaceStatus.LITTLE_CLOSE or face_status == FaceDetector.FaceStatus.CLOSE:
+                is_visible = True
+                toast_message = 'Move Away'
+
+            elif face_status == FaceDetector.FaceStatus.LITTLE_FAR or face_status == FaceDetector.FaceStatus.FAR:
+                is_visible = True
+                toast_message = 'Move Closer'
+
+            elif face_status == FaceDetector.FaceStatus.NOT_CENTER:
+                is_visible = True
+                toast_message = 'Center Your Face'
+
+            elif face_status == FaceDetector.FaceStatus.OUT_OF_FRAME:
+                is_visible = True
+                toast_message = 'Frame Your Face...'
+                learn_button_is_enabled = False
+                verify_button_is_enabled = False
+
+            self.camera_view.face_status_toast(verify_button_is_enabled, learn_button_is_enabled,
+                                               is_visible, toast_message)
 
     def start(self):
         CameraController.mutex.lock()
