@@ -1,9 +1,6 @@
-import numpy as np
-from PyQt6.QtCore import pyqtSlot, QObject, QMutex, QWaitCondition
-from PyQt6.QtGui import QPixmap, QImage
+from PyQt6.QtCore import QObject, QMutex, QWaitCondition
 
 from controller.overlay_controller import OverlayController
-from helper.face_detector import FaceDetector
 
 
 class CameraController(QObject):
@@ -20,6 +17,15 @@ class CameraController(QObject):
                                                     self.__on_collect_data_progressbar_update)
         self.__connect_signals()
         self.camera_view.set_on_closed(self.on_close)
+
+    def __connect_signals(self):
+        self.camera_model.update_frame_signal.connect(self.__update_view)
+        self.camera_model.on_frame_size_chosen.connect(self.__update_view_size)
+        self.camera_view.learn_button.clicked.connect(self.__on_learn_button_pressed)
+        self.camera_view.verify_button.clicked.connect(self.__on_verify_button_pressed)
+        self.camera_view.reset_button.clicked.connect(self.__on_reset_button_pressed)
+        self.camera_view.continue_button.clicked.connect(self.__on_continue_button_pressed)
+        self.camera_view.try_again_button.clicked.connect(self.__on_try_again_button_pressed)
 
     def start(self):
         CameraController.mutex.lock()
