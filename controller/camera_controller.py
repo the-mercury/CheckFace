@@ -104,6 +104,49 @@ class CameraController(QObject):
     def __on_collect_data_progressbar_update(self, is_visible, value):
         self.camera_view.progressbar_update(is_visible, value)
 
+    def __on_app_mode_update(self, app_mode):
+        is_visible = True
+        self.camera_view.overlay_view.setVisible(True)
+        self.camera_view.learn_button.setVisible(False)
+        self.camera_view.verify_button.setVisible(False)
+        self.camera_view.reset_button.setVisible(False)
+        self.camera_view.continue_button.setVisible(False)
+        self.camera_view.try_again_button.setVisible(False)
+        self.camera_view.loading_gif_view.stop_animation()
+        self.camera_view.loading_gif_view.setVisible(False)
+        self.camera_view.verified_view.setVisible(False)
+        self.camera_view.rejected_view.setVisible(False)
+        self.__on_collect_data_progressbar_update(False, 0)
+
+        if app_mode == OverlayController.AppMode.DATA_COLLECT:
+            toast_message = 'Collecting Your Face Data'
+            self.camera_view.app_mode_toast(is_visible, toast_message)
+
+        elif app_mode == OverlayController.AppMode.MODEL_GENERATE:
+            self.camera_view.loading_gif_view.start_animation()
+            self.camera_view.loading_gif_view.setVisible(True)
+            toast_message = 'Generating Your Face Model'
+            self.camera_view.app_mode_toast(is_visible, toast_message)
+
+        elif app_mode == OverlayController.AppMode.VERIFY:
+            self.camera_view.verify_button.setVisible(True)
+            self.camera_view.reset_button.setVisible(True)
+            self.camera_view.app_mode_toast(False, None)
+
+        elif app_mode == OverlayController.AppMode.PRE_START:
+            self.camera_view.learn_button.setVisible(True)
+            self.camera_view.app_mode_toast(False, None)
+
+        elif app_mode == OverlayController.AppMode.VERIFIED:
+            self.camera_view.continue_button.setVisible(True)
+            self.camera_view.verified_view.setVisible(True)
+            self.camera_view.overlay_view.setVisible(False)
+
+        elif app_mode == OverlayController.AppMode.REJECTED:
+            self.camera_view.try_again_button.setVisible(True)
+            self.camera_view.rejected_view.setVisible(True)
+            self.camera_view.overlay_view.setVisible(False)
+
     def start(self):
         CameraController.mutex.lock()
         self.camera_model.start()
