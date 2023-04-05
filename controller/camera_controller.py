@@ -81,6 +81,29 @@ class CameraController(QObject):
             self.camera_view.face_status_toast(verify_button_is_enabled, learn_button_is_enabled,
                                                is_visible, toast_message)
 
+    @pyqtSlot()
+    def __on_learn_button_pressed(self):
+        self.overlay_controller.on_learn_button_pressed()
+
+    @pyqtSlot()
+    def __on_verify_button_pressed(self):
+        self.overlay_controller.on_verify_button_pressed()
+
+    @pyqtSlot()
+    def __on_reset_button_pressed(self):
+        self.overlay_controller.on_reset_button_pressed()
+
+    @pyqtSlot()
+    def __on_continue_button_pressed(self):
+        self.overlay_controller.on_continue_button_pressed()
+
+    @pyqtSlot()
+    def __on_try_again_button_pressed(self):
+        self.overlay_controller.on_try_again_button_pressed()
+
+    def __on_collect_data_progressbar_update(self, is_visible, value):
+        self.camera_view.progressbar_update(is_visible, value)
+
     def start(self):
         CameraController.mutex.lock()
         self.camera_model.start()
