@@ -110,10 +110,7 @@ class OverlayController(QObject):
         embeddings_difference = np.linalg.norm(existing_model - face_embedding_buffer)
         similarity = 100 * (existing_model @ face_embedding_buffer.T)
 
-        if similarity < 0:
-            similarity = 0
-
-        if embeddings_difference < 1.1:
+        if similarity > 50 and embeddings_difference < 1.1:
             print('l2 distance: {:.2f}'.format(embeddings_difference))
             print('similarity: {:.2f}%'.format(similarity))
             self.app_mode = self.AppMode.VERIFIED
@@ -121,7 +118,7 @@ class OverlayController(QObject):
 
         else:
             print('l2 distance: {:.2f}'.format(embeddings_difference))
-            print('similarity: {:.2f}%'.format(similarity))
+            print('similarity: {:.2f}%'.format(similarity if similarity > 0 else 0))
             self.app_mode = self.AppMode.REJECTED
             self.on_app_mode_update(self.app_mode)
 
