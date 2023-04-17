@@ -73,7 +73,7 @@ class CameraView(QMainWindow):
     def set_toast_view_style(self, square_frame_size):
         toast_width = int(square_frame_size * 0.7)
         toast_height = square_frame_size * 0.14
-        self.toast_view.setGeometry((square_frame_size - toast_width) // 2, 0, toast_width, toast_height)
+        self.toast_view.setGeometry((square_frame_size - toast_width) // 2, 0, int(toast_width), int(toast_height))
 
     def progressbar_update(self, is_visible, value):
         self.collect_progress.setVisible(is_visible)
@@ -83,49 +83,54 @@ class CameraView(QMainWindow):
         toast_height = square_frame_size * 0.15
         toast_width = square_frame_size
         self.app_mode_toast_view.setGeometry((square_frame_size - toast_width) // 2, square_frame_size,
-                                             toast_width, toast_height)
+                                             int(toast_width), int(toast_height))
 
     def set_learn_button_style(self, square_frame_size):
         button_height = square_frame_size * 0.15
         button_width = square_frame_size
         self.learn_button.setText('Learn My Face')
         self.learn_button.setGeometry((square_frame_size - button_width) // 2, square_frame_size,
-                                      button_width, button_height)
+                                      int(button_width), int(button_height))
+
 
     def set_verify_button_style(self, square_frame_size):
         button_height = square_frame_size * 0.15
         button_width = square_frame_size * 0.75
         self.verify_button.setText('Verify My Face')
-        self.verify_button.setGeometry(0.25 * square_frame_size, square_frame_size,
-                                       button_width, button_height)
+        self.verify_button.setGeometry(int(0.25 * square_frame_size), square_frame_size,
+                                       int(button_width), int(button_height))
+
+
+
 
     def set_reset_button_style(self, square_frame_size):
         button_height = square_frame_size * 0.15
         button_width = square_frame_size * 0.25
         self.reset_button.setText('Reset')
         self.reset_button.setGeometry(0, square_frame_size,
-                                      button_width, button_height)
+                                      int(button_width), int(button_height))
 
     def set_continue_button_style(self, square_frame_size):
         button_height = square_frame_size * 0.15
         button_width = square_frame_size
         self.continue_button.setText('Continue')
-        self.continue_button.setGeometry((square_frame_size - button_width) // 2, square_frame_size,
-                                         button_width, button_height)
+        self.continue_button.setGeometry(int(square_frame_size - button_width) // 2, square_frame_size,
+                                         int(button_width), int(button_height))
 
     def set_try_again_button_style(self, square_frame_size):
         button_height = square_frame_size * 0.15
         button_width = square_frame_size
         self.try_again_button.setText('Try Again')
-        self.try_again_button.setGeometry((square_frame_size - button_width) // 2, square_frame_size,
-                                          button_width, button_height)
+        self.try_again_button.setGeometry(int(square_frame_size - button_width) // 2, square_frame_size,
+                                          int(button_width), int(button_height))
 
     def set_progress_bar_style(self, square_frame_size):
         progress_bar_height = square_frame_size * 0.02
         progress_bar_width = square_frame_size
         self.collect_progress.setGeometry((square_frame_size - progress_bar_width) // 2,
-                                          square_frame_size - progress_bar_height,
-                                          progress_bar_width, progress_bar_height)
+                                          int(square_frame_size - progress_bar_height),
+                                          progress_bar_width, int(progress_bar_height))
+
 
     def set_loading_gif_style(self, square_frame_size):
         gif_size = QSize(square_frame_size, square_frame_size)
