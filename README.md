@@ -32,3 +32,6 @@
 
 >You can exit from virtual environment using following command
 `deactivate`
+
+>In case running on Windows, 
+uncomment line 24, and comment out line 26 in the CheckFace/model/camera_model file.
