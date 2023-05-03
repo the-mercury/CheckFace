@@ -75,16 +75,15 @@ class OverlayController(QObject):
         cy_roi = y_roi + rect_height // 2
         # cv2.rectangle(frame, (x_roi, y_roi), (x_roi + rect_width, y_roi + rect_height), (0, 255, 255), 2)
 
-        face_coordinates = self.face_detector.detect(frame, scale_factor=1.1, min_neighbours=5)
-        if len(face_coordinates) == 0:
+        face_coordinates, detection_confidence = self.face_detector.detect(frame)
+        if face_coordinates is None or detection_confidence is None:
             face_status = self.face_detector.FaceStatus.OUT_OF_FRAME
         else:
-            x_face, y_face, face_width, face_height = face_coordinates[0][0], face_coordinates[0][1], \
-                                                      face_coordinates[0][2], face_coordinates[0][3]
+            x_face, y_face, face_width, face_height = face_coordinates[0], face_coordinates[1], \
+                                                      face_coordinates[2], face_coordinates[3]
             cx_face = x_face + face_width // 2
             cy_face = y_face + face_height // 2
-            # cv2.rectangle(frame, (x_face, y_face),
-            #               (x_face + face_width, y_face + face_height), (0, 255, 0), 2)
+            # cv2.rectangle(frame, (x_face, y_face), (x_face + face_width, y_face + face_height), (0, 255, 0), 2)
             # cv2.imshow('faces', frame)
             face_status = self.face_detector.check_face_position((cx_face, cy_face, face_width, face_height,
                                                                   cx_roi, cy_roi, rect_width, rect_height))

@@ -1,9 +1,7 @@
 import math
-import os
 from enum import Enum
 
-import cv2
-# import mediapipe as mp
+import mediapipe as mp
 
 
 class FaceDetector:
@@ -18,17 +16,34 @@ class FaceDetector:
         FAR = 2
 
     def __init__(self):
-        # ToDo: change to mediapipe face detector
-        cv2_base_dir = os.path.dirname(os.path.abspath(cv2.__file__))
-        self.detector = cv2.CascadeClassifier(os.path.join(cv2_base_dir, 'data/haarcascade_frontalface_alt.xml'))
-        # self.detector = mp.solutions.face_detection
+        self.__detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.5)
 
-    def detect(self, frame, scale_factor=1.1, min_neighbours=5):
-        grayscale_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        face_coordinates = self.detector.detectMultiScale(grayscale_frame, scale_factor, min_neighbours)
-        # face_coordinates = self.detector.FaceDetection
+    def detect(self, frame):
+        results = self.__detector.process(frame)
+        face_coordinates, detection_confidence = None, None
+        frame_shape = frame.shape
+        if results.detections is not None:
+            for detection in results.detections:
+                bounding_box = detection.location_data.relative_bounding_box
+                x_min = bounding_box.xmin
+                y_min = bounding_box.ymin
+                width = bounding_box.width
+                height = bounding_box.height
+                relative_face_coordinates = x_min, y_min, width, height
+                detection_confidence = detection.score[0]
+                face_coordinates = self.__get_absolute_coordinate(relative_face_coordinates, frame_shape)
 
-        return face_coordinates
+        return face_coordinates, detection_confidence
+
+    @staticmethod
+    def __get_absolute_coordinate(face_coordinates, frame_shape):
+        x_min = int(face_coordinates[0] * frame_shape[1])
+        y_min = int(face_coordinates[1] * frame_shape[0])
+        width = int(face_coordinates[2] * frame_shape[1])
+        height = int(face_coordinates[3] * frame_shape[0])
+        absolute_face_coordinates = x_min, y_min, width, height
+
+        return absolute_face_coordinates
 
     @staticmethod
     def check_face_position(face_and_roi_coordinates):
@@ -39,10 +54,9 @@ class FaceDetector:
 
         face_status = FaceDetector.FaceStatus.UNKNOWN
 
-        if face_roi_center_diff >= 14:
+        if face_roi_center_diff >= 30:
             face_status = FaceDetector.FaceStatus.NOT_CENTER
-
-        elif face_roi_center_diff < 14:
+        else:
             if 0.80 >= face_roi_height_ratio >= 0.65:
                 face_status = FaceDetector.FaceStatus.FINE
 
