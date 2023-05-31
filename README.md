@@ -20,7 +20,7 @@
 
         `python3 -m venv <your_virtual_environment_name>`
     
-2. Assuming you are using the bash shell
+2. Activate the virtual environment
         
         `source <your_virtual_environment_name>/bin/activate`
     
