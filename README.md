@@ -14,24 +14,23 @@
 
 >Install Python@3
         
-1. Create a virtual environment >> run in terminal
+<h6>Assuming you are using shell:</h6>
+
+1. Create a virtual environment
 
         `python3 -m venv <your_virtual_environment_name>`
     
-2. Assuming you are using the bash shell >> run in terminal
+2. Assuming you are using the bash shell
         
         `source <your_virtual_environment_name>/bin/activate`
     
-3. Install all the required packages using
+3. Install all the required packages
 
         `pip install -r requirements.txt`
      
-4. run main.py
+4. run the app
    
         `python main.py`
 
 >You can exit from virtual environment using following command
 `deactivate`
-
->In case running on Windows, 
-uncomment line 24, and comment out line 26 in the CheckFace/model/camera_model file.

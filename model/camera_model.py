@@ -1,6 +1,9 @@
+from platform import system
+
 import cv2
 import numpy as np
-from PyQt6.QtCore import QThread, pyqtSignal
+
+from PyQt6.QtCore import QThread, pyqtSignal, QMutex, QWaitCondition
 
 
 class CameraModel(QThread):
@@ -9,21 +12,21 @@ class CameraModel(QThread):
     on_frame_size_chosen = pyqtSignal(int)
 
     @staticmethod
-    def get_instance(frame_size, mutex, condition):
+    def get_instance(frame_size: int, mutex: QMutex, condition: QWaitCondition):
         if CameraModel._instance is None:
             CameraModel(frame_size, mutex, condition)
         return CameraModel._instance
 
-    def __init__(self, frame_size, mutex, condition):
+    def __init__(self, frame_size: int, mutex: QMutex, condition: QWaitCondition):
         if CameraModel._instance is not None:
             raise Exception('>>>NOTE: An instance of "CameraModel" already exists!')
         else:
             super(CameraModel, self).__init__()
             CameraModel._instance = self
-            # To run the app on a Windows machine:
-            # self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-            # On Mac:
-            self.capture = cv2.VideoCapture(0)
+            if system() == 'Windows':
+                self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+            else:
+                self.capture = cv2.VideoCapture(0)
             self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, frame_size)
             self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_size)
             self.mutex = mutex

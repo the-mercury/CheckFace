@@ -2,6 +2,7 @@ import math
 from enum import Enum
 
 import mediapipe as mp
+import numpy as np
 
 
 class FaceDetector:
@@ -18,7 +19,7 @@ class FaceDetector:
     def __init__(self):
         self.__detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.5)
 
-    def detect(self, frame):
+    def detect(self, frame: np.ndarray) -> tuple[tuple[int, int, int, int], float]:
         results = self.__detector.process(frame)
         face_coordinates, detection_confidence = None, None
         frame_shape = frame.shape
@@ -36,17 +37,7 @@ class FaceDetector:
         return face_coordinates, detection_confidence
 
     @staticmethod
-    def __get_absolute_coordinate(face_coordinates, frame_shape):
-        x_min = int(face_coordinates[0] * frame_shape[1])
-        y_min = int(face_coordinates[1] * frame_shape[0])
-        width = int(face_coordinates[2] * frame_shape[1])
-        height = int(face_coordinates[3] * frame_shape[0])
-        absolute_face_coordinates = x_min, y_min, width, height
-
-        return absolute_face_coordinates
-
-    @staticmethod
-    def check_face_position(face_and_roi_coordinates):
+    def check_face_position(face_and_roi_coordinates: tuple[int, int, int, int, int, int, int, int]) -> FaceStatus:
         face_roi_height_ratio = face_and_roi_coordinates[3] / face_and_roi_coordinates[7]
         face_roi_center_diff = int(
             math.sqrt((face_and_roi_coordinates[0] // 2 - face_and_roi_coordinates[4] // 2) ** 2 +
@@ -73,3 +64,14 @@ class FaceDetector:
                 face_status = FaceDetector.FaceStatus.FAR
 
         return face_status
+
+    @staticmethod
+    def __get_absolute_coordinate(face_coordinates: tuple[float, float, float, float],
+                                  frame_shape: tuple[int, int, int]) -> tuple[int, int, int, int]:
+        x_min = int(face_coordinates[0] * frame_shape[1])
+        y_min = int(face_coordinates[1] * frame_shape[0])
+        width = int(face_coordinates[2] * frame_shape[1])
+        height = int(face_coordinates[3] * frame_shape[0])
+        absolute_face_coordinates = x_min, y_min, width, height
+
+        return absolute_face_coordinates
