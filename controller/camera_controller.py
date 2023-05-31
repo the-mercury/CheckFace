@@ -31,7 +31,7 @@ class CameraController(QObject):
         self.camera_view.try_again_button.clicked.connect(self.__on_try_again_button_pressed)
 
     @pyqtSlot(np.ndarray)
-    def __update_view(self, frame):
+    def __update_view(self, frame: np.ndarray):
         CameraController.mutex.lock()
         height, width = frame.shape[:2]
         convert_to_qt_format = QImage(frame.data.tobytes(), width, height, QImage.Format.Format_RGB888)
@@ -42,11 +42,11 @@ class CameraController(QObject):
         CameraController.wait_condition.wakeAll()
 
     @pyqtSlot(int)
-    def __update_view_size(self, square_frame_size):
+    def __update_view_size(self, square_frame_size: int):
         self.camera_view.square_frame(square_frame_size)
         self.overlay_controller.update_overlay_mask(square_frame_size)
 
-    def __on_face_status_update(self, face_status, app_mode):
+    def __on_face_status_update(self, face_status: FaceDetector.FaceStatus, app_mode: OverlayController.AppMode):
         if app_mode is not OverlayController.AppMode.MODEL_GENERATE and \
                 app_mode is not OverlayController.AppMode.VERIFIED and \
                 app_mode is not OverlayController.AppMode.REJECTED:
@@ -101,10 +101,10 @@ class CameraController(QObject):
     def __on_try_again_button_pressed(self):
         self.overlay_controller.on_try_again_button_pressed()
 
-    def __on_collect_data_progressbar_update(self, is_visible, value):
+    def __on_collect_data_progressbar_update(self, is_visible: bool, value: int):
         self.camera_view.progressbar_update(is_visible, value)
 
-    def __on_app_mode_update(self, app_mode):
+    def __on_app_mode_update(self, app_mode: OverlayController.AppMode):
         is_visible = True
         self.camera_view.overlay_view.setVisible(True)
         self.camera_view.learn_button.setVisible(False)
